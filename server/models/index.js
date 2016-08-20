@@ -10,26 +10,61 @@ module.exports = {
         callback(data);
       });
     }, // a function which produces all the messages
-    post: function (message) { //TODO: MAKE SURE THAT IF USER IS NOT IN DATABASE, WE ADD USER TO DATABASE;
-      /*
-      !!!!!!!!!!!!!!!
-      !!!!!!!!!!!!
-      !!!!!!!!!!!!
-      !!!!!!!!!!!!!
-      !!!!!!!!!!!
-      !!!!!!!!!!!
-      !!!!!!!!!!!!
-      !!!!!!!!!!
-      */
-      console.log(message);
-      var query = 'INSERT into messages (userID,roomID,message,createdAt,updatedAt) \
-        VALUES ( \
-        (SELECT userID from users u where "' + message.username + '"=u.username), \
-        (SELECT roomID from rooms r where "' + message.roomname + '"=r.roomname),"'
-        + message.text + '","' + message.createdAt + '","' + message.updatedAt + '");';
+    post: function (message) {
+      var insertMessage = function(message) {
+        var query = 'INSERT into messages (userID,roomID,message,createdAt,updatedAt) \
+          VALUES ( \
+          (SELECT userID from users u where "' + message.username + '"=u.username), \
+          (SELECT roomID from rooms r where "' + message.roomname + '"=r.roomname),"'
+          + message.text + '","' + message.createdAt + '","' + message.updatedAt + '");';
 
-      //messages will have a username property, 
-      db.query(query);
+        //messages will have a username property, 
+        console.log(query, 'is being inserted');
+        db.query(query);
+      };
+
+      var insertUser = function(message, callback) {
+        var query = 'INSERT into users (username) VALUES ("' + message.username + '")';
+        db.query(query, function(err, data) {
+          callback(message);
+        });
+      };
+
+      var insertRoom = function(message, callback) {
+        var query = 'INSERT into rooms (roomname) VALUES ("' + message.roomname + '")';
+        db.query(query, function(err, data) {
+          callback(message);
+        });
+      };
+
+
+      
+
+      db.query('SELECT * from users u where "' + message.username + '"=u.username', function(err, data) {
+        console.log(data);
+        if (data.length === 0) { //[]
+          insertUser(message, function(err, data) {
+            db.query('SELECT roomname from rooms WHERE roomname = "' + message.roomname + '"', function(err, data) {
+              if (data.length === 0) {
+                insertRoom(message, insertMessage);
+              } else {
+                insertMessage(message);
+              }
+            });
+          });
+        } else {
+          db.query('SELECT roomname from rooms WHERE roomname = "' + message.roomname + '"', function(err, data) {
+            if (data.length === 0) {
+              insertRoom(message, insertMessage);
+            } else {
+              insertMessage(message);
+            }
+          });
+        }
+      });
+
+      
+      // console.log(message);
     } // a function which can be used to insert a message into the database
   },
 
