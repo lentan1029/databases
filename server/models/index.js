@@ -58,7 +58,7 @@ module.exports = {
 //   }
 // });
 
-module.exports.users.post('lentanasdfass');
-module.exports.users.get(function(data) {
-  console.log(data);
-});
+// module.exports.users.post('lentanasdfass');
+// module.exports.users.get(function(data) {
+//   console.log(data);
+// });
