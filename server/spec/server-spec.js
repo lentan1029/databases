@@ -77,10 +77,14 @@ describe('Persistent Node Chat Server', function() {
     });
   });
 
-  xit('Should output all messages from the DB', function(done) {
+  it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       // var queryString = "INSERT into messages ('createdAt','updatedAt','text'";
-       //"msgID":5,"userID":1,"roomID":1,"createdAt":"october 3rd","updatedAt":"october 4th","message":"test message"}
+    var queryString = 'INSERT into messages (userID,roomID,message,createdAt,updatedAt) \
+      VALUES ( \
+      (SELECT userID from users u where "' + 'Valjean'+ '"=u.username), \
+      (SELECT roomID from rooms r where "' + 'lobby' + '"=r.roomname),"'
+      + 'Passed a test' + '","' + 'October' + '","' + 'November' + '");';
+
     var queryArgs = [];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
@@ -93,8 +97,8 @@ describe('Persistent Node Chat Server', function() {
       // the message we just inserted:
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
         var messageLog = JSON.parse(body);
-        expect(messageLog[0].text).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname).to.equal('main');
+        expect(messageLog[0].message).to.equal('Passed a test');
+        expect(messageLog[0].roomID).to.equal(1);
         done();
       });
     });
