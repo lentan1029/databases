@@ -22,13 +22,13 @@ module.exports = {
     post: function (req, res) {
       res.writeHead(302, defaultHeaders);
       var dataStr = '';
-
       req.on('data', function(chunk) {
 
 
         dataStr += chunk;
       });
       req.on('end', function() {
+        //console.log('dataStr is' + dataStr);
         models.messages.post(JSON.parse(dataStr));
         res.end('Posted!');
       });
@@ -42,17 +42,34 @@ module.exports = {
       //Do we need this?
     },
     post: function (req, res) {
+     // console.log('HERE');
+      // console.log(typeof req);
+      // console.dir('constructor is' + req.constructor);
+      // console.log(req.headers);
+      // console.log(req.json);
+
       res.writeHead(302, defaultHeaders);
       var username = '';
-
+      //console.log('HERE');
+      //console.log(req);
+      console.log(req.body);
       req.on('data', function(chunk) {
+       // console.log(chunk);
         username += chunk;
+        console.log(chunk);
       });
 
+
+
       req.on('end', function() {
+        console.log(username);
+       // console.log('HERE');
         //console.log(JSON.parse(username).username);
         //console.log(models.messages.users.post);
-        models.users.post(JSON.parse(username).username);
+        //console.log(JSON.parse(username)['username']);
+        //JSON.
+        console.log('username is' + username);
+        models.users.post(JSON.parse(username)['username']);
         res.end('User posted!');
         
       });

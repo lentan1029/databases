@@ -11,12 +11,12 @@ describe('Persistent Node Chat Server', function() {
   beforeEach(function(done) {
     dbConnection = mysql.createConnection({
       user: 'root',
-      password: '',
+      password: 'root',
       database: 'chat'
     });
     dbConnection.connect();
 
-       var tablename = ""; // TODO: fill this out
+    var tablename = 'messages'; // TODO: fill this out
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
@@ -32,17 +32,29 @@ describe('Persistent Node Chat Server', function() {
     request({
       method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/users',
-      json: { username: 'Valjean' }
+      json: {'username': 'Valjean'},
+      headers: {host: '127.0.0.1:3000',
+        connection: 'keep-alive',
+        accept: '*/*',
+        origin: 'null',
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'accept-encoding': 'gzip, deflate',
+        'accept-language': 'en-US,en;q=0.8'}
     }, function () {
       // Post a message to the node chat server:
+      console.log('COMPLETED INSERTION OF USER');
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/messages',
         json: {
-          username: 'Valjean',
-          message: 'In mercy\'s name, three days is all I need.',
-          roomname: 'Hello'
-        }
+          username: 'Valjean3', text: 'In mercy\'s name, three days is all I need.', roomname: 'Hello'},
+        headers: {host: '127.0.0.1:3000',
+        connection: 'keep-alive',
+        accept: '*/*',
+        origin: 'null',
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'accept-encoding': 'gzip, deflate',
+        'accept-language': 'en-US,en;q=0.8'}
       }, function () {
         // Now if we look in the database, we should find the
         // posted message there.
@@ -57,7 +69,7 @@ describe('Persistent Node Chat Server', function() {
           expect(results.length).to.equal(1);
 
           // TODO: If you don't have a column named text, change this test.
-          expect(results[0].text).to.equal('In mercy\'s name, three days is all I need.');
+          expect(results[0].message).to.equal('In mercy\'s name, three days is all I need.');
 
           done();
         });
@@ -65,10 +77,11 @@ describe('Persistent Node Chat Server', function() {
     });
   });
 
-  it('Should output all messages from the DB', function(done) {
+  xit('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       var queryString = "";
-       var queryArgs = [];
+       // var queryString = "INSERT into messages ('createdAt','updatedAt','text'";
+       //"msgID":5,"userID":1,"roomID":1,"createdAt":"october 3rd","updatedAt":"october 4th","message":"test message"}
+    var queryArgs = [];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */

@@ -11,6 +11,7 @@ module.exports = {
       });
     }, // a function which produces all the messages
     post: function (message) {
+      // console.log('INTO MODELS.MESSAGES');
       var insertMessage = function(message) {
         var query = 'INSERT into messages (userID,roomID,message,createdAt,updatedAt) \
           VALUES ( \
@@ -19,7 +20,7 @@ module.exports = {
           + message.text + '","' + message.createdAt + '","' + message.updatedAt + '");';
 
         //messages will have a username property, 
-        console.log(query, 'is being inserted');
+        //console.log(query, 'is being inserted');
         db.query(query);
       };
 
@@ -41,7 +42,7 @@ module.exports = {
       
 
       db.query('SELECT * from users u where "' + message.username + '"=u.username', function(err, data) {
-        console.log(data);
+        // console.log(data);
         if (data.length === 0) { //[]
           insertUser(message, function(err, data) {
             db.query('SELECT roomname from rooms WHERE roomname = "' + message.roomname + '"', function(err, data) {
@@ -76,8 +77,10 @@ module.exports = {
       });
     },
     post: function (username) { 
-      //console.log(username);
-      var currentUsers = this.get(function(data) {
+    //  console.log('inside models.users.post', username);
+      var currentUsers = module.exports.users.get(function(data) {
+        // console.log('this is', this);
+      //  console.log('data is', data);
         for (var index in data) {
           if (data[index].username === username) {
             // throw new Error(username + 'is already in the database'); //TODO: error catching
