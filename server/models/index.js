@@ -11,6 +11,7 @@ module.exports = {
       });
     }, // a function which produces all the messages
     post: function (message) {
+      console.log(message);
       var query = 'INSERT into messages (userID,roomID,message,createdAt,updatedAt) \
         VALUES ( \
         (SELECT userID from users u where "' + message.username + '"=u.username), \
@@ -30,11 +31,13 @@ module.exports = {
       });
     },
     post: function (username) {
+      //console.log(username);
       var currentUsers = this.get(function(data) {
         for (var index in data) {
           if (data[index].username === username) {
-            throw new Error(username, 'is already in the database');
-          }
+            // throw new Error(username + 'is already in the database'); //TODO: error catching
+            return;
+          } 
         }
         var query = 'INSERT INTO users (username) VALUES ("' + username + '")';
         db.query(query);
@@ -61,4 +64,9 @@ module.exports = {
 // module.exports.users.post('lentanasdfass');
 // module.exports.users.get(function(data) {
 //   console.log(data);
+
+// INSERT into messages (userID,roomID,message,createdAt,updatedAt) 
+//         VALUES (
+//         (SELECT userID from users u where 'lentanasdfass' =u.username), 
+//         (SELECT roomID from rooms r where 'lobby' = r.roomname), 'text','October','November');
 // });
