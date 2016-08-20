@@ -10,7 +10,17 @@ module.exports = {
         callback(data);
       });
     }, // a function which produces all the messages
-    post: function (message) {
+    post: function (message) { //TODO: MAKE SURE THAT IF USER IS NOT IN DATABASE, WE ADD USER TO DATABASE;
+      /*
+      !!!!!!!!!!!!!!!
+      !!!!!!!!!!!!
+      !!!!!!!!!!!!
+      !!!!!!!!!!!!!
+      !!!!!!!!!!!
+      !!!!!!!!!!!
+      !!!!!!!!!!!!
+      !!!!!!!!!!
+      */
       console.log(message);
       var query = 'INSERT into messages (userID,roomID,message,createdAt,updatedAt) \
         VALUES ( \
@@ -30,7 +40,7 @@ module.exports = {
         callback(data);
       });
     },
-    post: function (username) {
+    post: function (username) { 
       //console.log(username);
       var currentUsers = this.get(function(data) {
         for (var index in data) {
